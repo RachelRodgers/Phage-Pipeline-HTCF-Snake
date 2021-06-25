@@ -1,0 +1,11 @@
+---
+Paths:
+  Hecatomb: ../../hecatomb
+  CT2_template: /scratch/mtblab/rachel/somya_mouse_poop_vlps/scripts/phage_pipeline/phage_CT2_template.sbt
+  CT2_path: /opt/apps/labs/mtblab/software
+
+Tools:
+  BBTools: bbtools/38.26
+  megahit: megahit/1.1.4
+  SeqKit: seqkit/0.10.1
+  flye: py-flye/2.8.1-python-3.6.5
