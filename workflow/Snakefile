@@ -38,6 +38,7 @@ BBTOOLS = config["Tools"]["BBTools"]
 MEGAHIT = config["Tools"]["megahit"]
 SEQKIT = config["Tools"]["SeqKit"]
 FLYE = config["Tools"]["flye"]
+R = config["Tools"]["R"]
 
 #----- Collect the Input Files -----#
 
@@ -48,6 +49,7 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 
 rule all:
 	input:
+		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
 		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv"),
 		expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES)
 
@@ -259,7 +261,7 @@ rule annotate_contig_dictionary:
 	input:
 		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
 	params:
-		temp(directory(os.path.join("ct2_annotated_contig_dictionary")))
+		directory(os.path.join("ct2_annotated_contig_dictionary"))
 	output:
 		os.path.join("ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
 	resources:
@@ -284,5 +286,21 @@ rule move_contig_annotations:
 	shell:
 		"""
 		mv {params.inDir}/* {params.outDir}
-		rm -rf {params.inDir}
+		rm -rf ct2_annotated_contig_dictionary/
+		rm -rf ct2_annotated_contig_dictionary_*
+		"""
+
+rule generate_contig_abundances:
+	"""
+	Calculate contig abundances from TPM
+	"""
+	input:
+		rpkm = expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES),
+		covstats = expand(os.path.join("results", "quantification", "{sample}.covstats"), sample = SAMPLES)
+	output:
+		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
+	shell:
+		"""
+		ml {R}
+		Rscript ./workflow/scripts/Generate_Contig_Abundance_Table.R
 		"""

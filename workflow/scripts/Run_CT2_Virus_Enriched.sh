@@ -12,7 +12,7 @@ eval "$(conda shell.bash hook)"
 conda activate ${environmentPath}/cenote-taker2_env/
 
 python ${environmentPath}/Cenote-Taker2/run_cenote-taker2.py \
-	--contigs workflow/results/contig_dictionary/assembly_1kb.fasta \
+	--contigs ./results/contig_dictionary/assembly_1kb.fasta \
 	--run_title ct2_annotated_contig_dictionary \
 	--template_file ${templatePath} \
 	--prune_prophage False \
