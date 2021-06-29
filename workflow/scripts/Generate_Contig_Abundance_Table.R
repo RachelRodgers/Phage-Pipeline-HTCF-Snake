@@ -6,7 +6,7 @@
 
 options(warn = -1) # Suppress warning messages for clarity
 
-source("./snakemake_helpers/snakemake_helpers.R")
+source("./workflow/scripts/snakemake_helpers/snakemake_helpers.R")
 
 requiredPackages <- c("tidyverse")
 

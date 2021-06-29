@@ -38,6 +38,13 @@ BBTOOLS = config["Tools"]["BBTools"]
 MEGAHIT = config["Tools"]["megahit"]
 SEQKIT = config["Tools"]["SeqKit"]
 FLYE = config["Tools"]["flye"]
+R = config["Tools"]["R"]
+METASPADES = config["Tools"]["metaSPAdes"]
+BLAST = config["Tools"]["blast"]
+
+# Databases
+GVD = config["DBs"]["GVD"]
+GPD = config["DBs"]["GPD"]
 
 #----- Collect the Input Files -----#
 
@@ -48,8 +55,12 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 
 rule all:
 	input:
-		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv"),
-		expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES)
+		os.path.join("results", "GPD_blastN_results", "GPD_contig_dictionary_blastN_results.tab"),
+		os.path.join("results", "GVD_blastN_results", "GVD_contig_dictionary_blastN_results.tab"),
+		os.path.join("results", "ref", "genome", "2", "summary.txt"),
+		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
+		#os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv"),
+		#expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES)
 
 rule get_r2_singletons:
 	"""
@@ -91,31 +102,23 @@ rule bbnorm:
 			t={threads}
 		"""
 
-rule megahit:
+rule metaspades:
 	"""
-	Contig assembly per sample with MEGAHIT
+	Contig assembly per sample with metaSPAdes
 	"""
 	input:
 		r1 = os.path.join("results", "bbnorm", "{sample}_R1.norm.out.fastq"),
-		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq"),
-		r1Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R1.out.fastq"),
-                r2Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R2.out.fastq")
+		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq")
 	params:
-		#directory(os.path.join("results", "megahit", "{sample}"))
+		directory(os.path.join("results", "metaSPAdes", "{sample}"))
 	output:
-		temp_dir = temp(directory(os.path.join("results", "megahit", "{sample}_TEMP"))), 
-		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
+		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
 	shell:
 		"""
-		ml {MEGAHIT}
-		megahit \
+		{METASPADES} \
 			-1 {input.r1} \
 			-2 {input.r2} \
-			-r {input.r1Singletons},{input.r2Singletons} \
-			-o {output.temp_dir} \
-			--verbose
-
-		mv {output.temp_dir}/final.contigs.fa {output.contigs}
+			-o {params}
 		"""
 
 rule rename_contigs:
@@ -124,7 +127,7 @@ rule rename_contigs:
 	Prevents flye from crashing.
 	"""
 	input:
-		os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
+		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
 	output:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
@@ -206,20 +209,21 @@ rule filter_contig_dictionary:
                         -o {output}
                 """
 
-rule build_reference:
+rule build_reference_from_contig_dictionary:
 	"""
-	Build reference for BBMap for the quantification by mapping (RPKM step)
+	Build reference from contig dictionary for BBMap for the quantification by mapping (RPKM step)
 	"""
 	input:
 		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
-	params:
-		#directory(os.path.join("results", "contig_dictionary"))
 	output:
-		os.path.join("ref", "genome", "1", "summary.txt")
+		os.path.join("results", "ref", "genome", "1", "summary.txt")
 	shell:
 		"""
 		ml {BBTOOLS}
-		bbmap.sh ref={input}
+		bbmap.sh \
+			ref={input} \
+			build=1 \
+			path=./results
 		"""
 	
 rule quantification_by_mapping:
@@ -229,7 +233,7 @@ rule quantification_by_mapping:
 	input:
 		r1 = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_R1.s7.out.fastq"),
                 r2 = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_R2.s7.out.fastq"),
-		summary = os.path.join("ref", "genome", "1", "summary.txt")
+		summary = os.path.join("results", "ref", "genome", "1", "summary.txt")
 	output:
 		sam = os.path.join("results", "quantification", "{sample}.aln.sam.gz"),
 		rpkm = os.path.join("results", "quantification", "{sample}.rpkm"),
@@ -239,6 +243,8 @@ rule quantification_by_mapping:
 		"""
 		ml {BBTOOLS}	
 		bbmap.sh \
+			path=./results \
+			build=1 \
 			in={input.r1} \
 			in2={input.r2} \
 			out={output.sam} \
@@ -252,37 +258,122 @@ rule quantification_by_mapping:
 			t={threads}
 		"""
 
-rule annotate_contig_dictionary:
+rule generate_contig_abundances:
 	"""
-	Annotate contig dictionary with CT2
+	Calculate contig abundances using TPM
 	"""
 	input:
-		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
-	params:
-		temp(directory(os.path.join("ct2_annotated_contig_dictionary")))
+		rpkm = expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES),
+		covstats = expand(os.path.join("results", "quantification", "{sample}.covstats"), sample = SAMPLES)
 	output:
-		os.path.join("ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
-	resources:
-		mem_mb=32000,
-		threads=16
+		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
 	shell:
 		"""
-		bash ./workflow/scripts/Run_CT2_Virus_Enriched.sh
+		ml {R}
+		Rscript ./workflow/scripts/Generate_Contig_Abundance_Table.R
 		"""
 
-rule move_contig_annotations:
+rule build_reference_from_GVD:
 	"""
-	Move CT2 contig annotations into the results directory.
+	Build bbmap reference from the Human Gut Virome Database for contig dictionary annotation.
 	"""
 	input:
-		os.path.join("ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
-	params:
-		inDir = directory(os.path.join("ct2_annotated_contig_dictionary")),
-		outDir = directory(os.path.join("results", "ct2_annotated_contig_dictionary"))
+		{GVD}
 	output:
-		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
+		os.path.join("results", "ref", "genome", "2", "summary.txt")
 	shell:
 		"""
-		mv {params.inDir}/* {params.outDir}
-		rm -rf {params.inDir}
+		ml {BBTOOLS}
+		bbmap.sh \
+			ref={input} \
+			build=2 \
+			path=./results
+		"""
+
+rule build_GVD_blast_db:
+	"""
+	Generate a nucleotide blastDB from the GVD file.
+	"""
+	input:
+		{GVD}
+	params:
+		prefix = "GVD",
+		out_dir = os.path.join("results", "GVD_blastN_db")
+	output:
+		os.path.join("results", "GVD_blastN_db", "GVD.ndb")
+	shell:
+		"""
+		{BLAST}/makeblastdb \
+			-in {input} \
+			-out {params.prefix} \
+			-dbtype nucl
+
+		mv GVD.* {params.out_dir}
+		"""
+
+rule query_GVD:
+	"""
+	Run blastN search of filtered contig dictionary against GVD to get annotations.
+	"""
+	input:
+		dbFile = os.path.join("results", "GVD_blastN_db", "GVD.ndb"),
+		query = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+	params:
+		blast_dir = os.path.join("results", "GVD_blastN_db"),
+		prefix = "GVD"
+	output:
+		os.path.join("results", "GVD_blastN_results", "GVD_contig_dictionary_blastN_results.tab")
+	threads: 8
+	shell:
+		"""
+		{BLAST}/blastn \
+			-db {params.blast_dir}/{params.prefix} \
+			-query {input.query} \
+			-out {output} \
+			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
+			-num_threads {threads}
+		"""
+
+rule build_GPD_blast_db:
+	"""
+	Generate a nucleotide blastDB from the Gut Phage Database file.
+	"""
+	input:
+		{GPD}
+	params:
+		prefix = "GPD",
+		out_dir = os.path.join("results", "GPD_blastN_db")
+	output:
+		os.path.join("results", "GPD_blastN_db", "GPD.ndb")
+	shell:
+		"""
+		{BLAST}/makeblastdb \
+			-in {input} \
+			-out {params.prefix} \
+			-dbtype nucl
+		
+		mv GPD.* {params.out_dir}
+		"""
+
+rule query_GPD:
+	"""
+	Run blastN search of filtered contig dictionary against GPD to get annotations.
+	"""
+	input:
+		dbFile = os.path.join("results", "GPD_blastN_db", "GPD.ndb"),
+		query = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+	params:
+		blast_dir = os.path.join("results", "GPD_blastN_db"),
+		prefix = "GPD"
+	output:
+		os.path.join("results", "GPD_blastN_results", "GPD_contig_dictionary_blastN_results.tab")
+	threads: 8
+	shell:
+		"""
+		{BLAST}/blastn \
+			-db {params.blast_dir}/{params.prefix} \
+			-query {input.query} \
+			-out {output} \
+			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
+			-num_threads {threads}
 		"""
