@@ -102,27 +102,23 @@ rule bbnorm:
 			t={threads}
 		"""
 
-rule megahit:
+rule metaspades:
 	"""
-	Contig assembly per sample with MEGAHIT
+	Contig assembly per sample with metaSPAdes
 	"""
 	input:
 		r1 = os.path.join("results", "bbnorm", "{sample}_R1.norm.out.fastq"),
-		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq"),
-		r1Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R1.out.fastq"),
-		r2Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R2.out.fastq")
+		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq")
+	params:
+		directory(os.path.join("results", "metaSPAdes", "{sample}"))
 	output:
-		temp_dir = temp(directory(os.path.join("results", "megahit", "{sample}_TEMP"))),
-		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
+		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
 	shell:
 		"""
-		ml {MEGAHIT}
-		megahit \
+		{METASPADES} \
 			-1 {input.r1} \
 			-2 {input.r2} \
-			-r {input.r1Singletons},{input.r2Singletons} \
-			-o {output.temp_dir} \
-		mv {output.temp_dir}/final.contigs.fa {output.contigs}
+			-o {params}
 		"""
 
 rule rename_contigs:
@@ -131,7 +127,7 @@ rule rename_contigs:
 	Prevents flye from crashing.
 	"""
 	input:
-		os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
+		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
 	output:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
@@ -146,7 +142,7 @@ rule rename_contigs:
 
 rule filter_contigs:
 	"""
-	Filter megahit-assembled contigs to a minimum of 1kb with Seqkit
+	Filter metaSPAdes-assembled contigs to a minimum of 1kb with Seqkit
 	"""
 	input:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
@@ -162,14 +158,13 @@ rule filter_contigs:
 		"""
 
 rule concatenate_renamed_contigs:
-        """
-        Concatenate all individual (renamed) contig assemblies into one file for flye.
-        Hopefully this prevents issues with samples producing 0 contigs.
-        """
-        input:
-                expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
-        output:
-                os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
+	"""
+	Concatenate all individual renamed contig assemblies into one file for flye.
+	"""
+	input:
+		expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
+	output:
+		os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
 	shell:
 		"cat {input} > {output}"
 
