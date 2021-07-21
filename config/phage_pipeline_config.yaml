@@ -1,8 +1,6 @@
 ---
 Paths:
   Hecatomb: eLABE_test_data
-  CT2_template: /scratch/mtblab/rachel/somya_mouse_poop_vlps/scripts/phage_pipeline/phage_CT2_template.sbt
-  CT2_path: /opt/apps/labs/mtblab/software
 
 DBs:
   GVD: resources/GVD/GVDv1_viralpopulations.fna
@@ -10,9 +8,8 @@ DBs:
 
 Tools:
   BBTools: bbtools/38.26
-  megahit: megahit/1.1.4
   SeqKit: seqkit/0.10.1
-  flye: py-flye/2.8.1-python-3.6.5
+  Flye: py-flye/2.8.1-python-3.6.5
   R: r/3.6.3-python-3.6.5-java-11
   metaSPAdes: /opt/apps/labs/mtblab/software/SPAdes-3.15.2-Linux/bin/metaspades.py
-  blast: /opt/apps/labs/mtblab/software/ncbi-blast-2.11.0+/bin
+  BLAST: /opt/apps/labs/mtblab/software/ncbi-blast-2.11.0+/bin
