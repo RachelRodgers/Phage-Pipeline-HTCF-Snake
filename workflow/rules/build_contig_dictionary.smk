@@ -24,7 +24,7 @@ rule get_r2_singletons:
 		os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R2.out.fastq")
 	shell:
 		"""
-		grep -A 3 '2:N:' {input} | sed '/^--$/d' > {output}
+		grep -A 3 '2:N:' {input} || true | sed '/^--$/d' > {output}
 		"""
 
 rule bbnorm:
@@ -79,7 +79,7 @@ rule rename_contigs:
 	Prevents flye from crashing.
 	"""
 	input:
-		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fa")
+		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
 	output:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
