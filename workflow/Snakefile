@@ -25,7 +25,7 @@ rule all:
 	input:
 		os.path.join("results", "GPD_tBLASTx_results", "GPD_contig_dictionary_tBLASTx_results.tab"),
 		os.path.join("results", "GVD_tBLASTx_results", "GVD_contig_dictionary_tBLASTx_results.tab"),
-		os.path.join("results", "ref", "genome", "2", "summary.txt"),
+		os.path.join("results", "MGV_tBLASTx_results", "MGV_contig_dictionary_tBLASTx_results.tab"),
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
 		
 #----- Snakemake Workflow -----#
@@ -41,3 +41,6 @@ include: "./rules/query_GVD.smk"
 
 #----- tBLASTx Contig Dictionary against the Gut Phage DB (GPD) -----#
 include: "./rules/query_GPD.smk"
+
+#----- tBLASTx Contig Dictionary against the Metagenomic Gut Virus Catalog (MGV) -----#
+include: "./rules/query_MGV.smk"

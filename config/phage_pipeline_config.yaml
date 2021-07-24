@@ -1,10 +1,11 @@
 ---
 Paths:
-  Hecatomb: eLABE_test_data
+  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/data/raw_data/viral
 
 DBs:
-  GVD: resources/GVD/GVDv1_viralpopulations.fna
-  GPD: resources/GPD/GPD_sequences.fa
+  GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/GVD/GVDv1_viralpopulations.fna
+  GPD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/GPD/GPD_sequences.fa
+  MGV: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Metagenomic_Gut_Virus_Catalog/mgv_contigs.fna
 
 Tools:
   BBTools: bbtools/38.26

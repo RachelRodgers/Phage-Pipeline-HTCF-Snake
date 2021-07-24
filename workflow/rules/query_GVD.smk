@@ -6,28 +6,10 @@
 configfile: "./config/phage_pipeline_config.yaml"
 
 # Tools
-BBTOOLS = config["Tools"]["BBTools"]
 BLAST = config["Tools"]["BLAST"]
 
 # Databases
 GVD = config["DBs"]["GVD"]
-
-rule build_reference_from_GVD:
-	"""
-	Build bbmap reference from the Human Gut Virome Database for contig dictionary annotation.
-	"""
-	input:
-		{GVD}
-	output:
-		os.path.join("results", "ref", "genome", "2", "summary.txt")
-	shell:
-		"""
-		ml {BBTOOLS}
-		bbmap.sh \
-			ref={input} \
-			build=2 \
-			path=./results
-		"""
 
 rule build_GVD_blast_db:
 	"""
@@ -70,5 +52,6 @@ rule query_GVD:
 			-query {input.query} \
 			-out {output} \
 			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
+			-evalue 0.001 \
 			-num_threads {threads}
 		"""

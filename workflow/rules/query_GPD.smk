@@ -6,7 +6,6 @@
 configfile: "./config/phage_pipeline_config.yaml"
 
 # Tools
-BBTOOLS = config["Tools"]["BBTools"]
 BLAST = config["Tools"]["BLAST"]
 
 # Databases
@@ -53,5 +52,6 @@ rule query_GPD:
 			-query {input.query} \
 			-out {output} \
 			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
+			-evalue 0.001 \
 			-num_threads {threads}
 		"""
