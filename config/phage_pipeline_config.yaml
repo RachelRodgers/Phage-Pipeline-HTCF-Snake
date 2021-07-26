@@ -1,6 +1,6 @@
 ---
 Paths:
-  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/data/raw_data/viral
+  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/Hecatomb-HTCF-Snake
 
 DBs:
   GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/GVD/GVDv1_viralpopulations.fna

@@ -24,7 +24,12 @@ rule get_r2_singletons:
 		os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R2.out.fastq")
 	shell:
 		"""
-		grep -A 3 '2:N:' {input} || true | sed '/^--$/d' > {output}
+		if grep -q '2:N:' {input}
+		then
+			grep -A 3 '2:N:' {input} | sed '/^--$/d' > {output}
+		else
+			touch {output}
+		fi
 		"""
 
 rule bbnorm:

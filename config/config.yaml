@@ -1,4 +1,4 @@
 jobs: 10
-cluster: "sbatch --mem={resources.mem_mb} -c {resources.cpus} -J {rule}_{wildcards} --mail-type=FAIL --mail-user=rachel.rodgers@wustl.edu"
+cluster: ~/.config/snakemake/slurm-submit.py --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -J {rule}_{wildcards} --mail-type=FAIL --mail-user=rachel.rodgers@wustl.edu 
 default-resources: [cpus=4, mem_mb=16000]
 resources: [cpus=24, mem_mb=250000]
