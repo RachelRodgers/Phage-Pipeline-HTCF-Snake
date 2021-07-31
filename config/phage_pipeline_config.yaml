@@ -1,6 +1,6 @@
 ---
 Paths:
-  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/Hecatomb-HTCF-Snake
+  Hecatomb: /scratch/mtblab/rachel/Holtz_eLABE/Hecatomb_Run_210511/Hecatomb-HTCF-Snake
 
 DBs:
   GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/GVD/GVDv1_viralpopulations.fna
@@ -12,5 +12,6 @@ Tools:
   SeqKit: seqkit/0.10.1
   Flye: py-flye/2.8.1-python-3.6.5
   R: r/3.6.3-python-3.6.5-java-11
-  metaSPAdes: /opt/apps/labs/mtblab/software/SPAdes-3.15.2-Linux/bin/metaspades.py
+  metaSPAdes: spades/3.14.0-python-2.7.15
   BLAST: /opt/apps/labs/mtblab/software/ncbi-blast-2.11.0+/bin
+  megahit: megahit/1.1.4

@@ -11,6 +11,7 @@ HECATOMB_DIR = config["Paths"]["Hecatomb"]
 # Tools
 BBTOOLS = config["Tools"]["BBTools"]
 METASPADES = config["Tools"]["metaSPAdes"]
+MEGAHIT = config["Tools"]["megahit"]
 SEQKIT = config["Tools"]["SeqKit"]
 FLYE = config["Tools"]["Flye"]
 
@@ -59,23 +60,29 @@ rule bbnorm:
 			t={threads}
 		"""
 
-rule metaspades:
+rule megahit:
 	"""
-	Contig assembly per sample with metaSPAdes
+	Contig assembly per sample with MEGAHIT
 	"""
 	input:
 		r1 = os.path.join("results", "bbnorm", "{sample}_R1.norm.out.fastq"),
-		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq")
-	params:
-		directory(os.path.join("results", "metaSPAdes", "{sample}"))
+		r2 = os.path.join("results", "bbnorm", "{sample}_R2.norm.out.fastq"),
+		r1Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R1.out.fastq"),
+		r2Singletons = os.path.join(HECATOMB_DIR, "results", "QC", "step_7", "{sample}_singletons_R2.out.fastq")
 	output:
-		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
+		temp_dir = temp(directory(os.path.join("results", "megahit", "{sample}_TEMP"))),
+		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
 	shell:
 		"""
-		{METASPADES} \
+		ml {MEGAHIT}
+		megahit \
 			-1 {input.r1} \
 			-2 {input.r2} \
-			-o {params}
+			-r {input.r1Singletons},{input.r2Singletons} \
+			-o {output.temp_dir} \
+			--verbose
+
+		mv {output.temp_dir}/final.contigs.fa {output.contigs}
 		"""
 
 rule rename_contigs:
@@ -84,7 +91,7 @@ rule rename_contigs:
 	Prevents flye from crashing.
 	"""
 	input:
-		os.path.join("results", "metaSPAdes", "{sample}", "contigs.fasta")
+		os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
 	output:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:

@@ -41,7 +41,7 @@ rule query_MGV:
 		query = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
 	params:
 		blast_dir = os.path.join("results", "MGV_nucleotide_db"),
-		prefix = "GPD"
+		prefix = "MGV"
 	output:
 		os.path.join("results", "MGV_tBLASTx_results", "MGV_contig_dictionary_tBLASTx_results.tab")
 	threads: 8
