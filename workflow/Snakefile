@@ -23,9 +23,9 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 
 rule all:
 	input:
-		os.path.join("results", "GPD_tBLASTx_results", "GPD_contig_dictionary_tBLASTx_results.tab"),
-		os.path.join("results", "GVD_tBLASTx_results", "GVD_contig_dictionary_tBLASTx_results.tab"),
-		os.path.join("results", "MGV_tBLASTx_results", "MGV_contig_dictionary_tBLASTx_results.tab"),
+		os.path.join("results", "mmseqs_GVD_results", "mmseqs_GVD_results.m8"),
+		os.path.join("results", "mmseqs_GPD_results", "mmseqs_GPD_results.m8"),
+		os.path.join("results", "mmseqs_MGV_results", "mmseqs_MGV_results.m8"),
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
 		
 #----- Snakemake Workflow -----#

@@ -6,52 +6,32 @@
 configfile: "./config/phage_pipeline_config.yaml"
 
 # Tools
-BLAST = config["Tools"]["BLAST"]
+MMSEQS = config["Tools"]["MMSeqs2"]
 
 # Databases
 MGV = config["DBs"]["MGV"]
 
-rule build_MGV_blast_db:
-	"""
-	Generate a nucleotide blastDB from the Metagenomic Gut Virus Catalog file.
-	"""
-	input:
-		{MGV}
-	params:
-		prefix = "MGV",
-		out_dir = os.path.join("results", "MGV_nucleotide_db")
-	output:
-		os.path.join("results", "MGV_nucleotide_db", "MGV.ndb")
-	shell:
-		"""
-		{BLAST}/makeblastdb \
-			-in {input} \
-			-out {params.prefix} \
-			-dbtype nucl
-		
-		mv MGV.* {params.out_dir}
-		"""
-
-rule query_MGV:
-	"""
-	Run tBLASTx search of filtered contig dictionary against MGV to get annotations.
-	"""
-	input:
-		dbFile = os.path.join("results", "MGV_nucleotide_db", "MGV.ndb"),
-		query = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
-	params:
-		blast_dir = os.path.join("results", "MGV_nucleotide_db"),
-		prefix = "MGV"
-	output:
-		os.path.join("results", "MGV_tBLASTx_results", "MGV_contig_dictionary_tBLASTx_results.tab")
-	threads: 8
-	shell:
-		"""
-		{BLAST}/tblastx \
-			-db {params.blast_dir}/{params.prefix} \
-			-query {input.query} \
-			-out {output} \
-			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
-			-evalue 0.001 \
-			-num_threads {threads}
-		"""
+rule mmseqs_MGV:
+        """
+        Run mmseqs2 easy-search of contig dictionary against MGV
+        """
+        input:
+                queryFile = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta"),
+                targetFile = {MGV}
+        output:
+                tmpDir = directory(temp(os.path.join("results", "mmseqs_MGV_results_tmp"))),
+                alignmentFile = os.path.join("results", "mmseqs_MGV_results", "mmseqs_MGV_results.m8")
+        threads: 16
+        resources:
+                mem_mb = 96000
+        shell:
+                """
+                module load {MMSEQS}
+                mmseqs easy-search \
+                        {input.queryFile} \
+                        {input.targetFile} \
+                        {output.alignmentFile} \
+                        {output.tmpDir} \
+                        --search-type 2 \
+                        --threads {threads}
+                """

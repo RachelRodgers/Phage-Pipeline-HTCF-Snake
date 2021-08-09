@@ -6,52 +6,32 @@
 configfile: "./config/phage_pipeline_config.yaml"
 
 # Tools
-BLAST = config["Tools"]["BLAST"]
+MMSEQS = config["Tools"]["MMSeqs2"]
 
 # Databases
 GVD = config["DBs"]["GVD"]
 
-rule build_GVD_blast_db:
+rule mmseqs_GVD:
 	"""
-	Generate a nucleotide blastDB from the GVD file.
-	"""
-	input:
-		{GVD}
-	params:
-		prefix = "GVD",
-		out_dir = os.path.join("results", "GVD_nucleotide_db")
-	output:
-		os.path.join("results", "GVD_nucleotide_db", "GVD.ndb")
-	shell:
-		"""
-		{BLAST}/makeblastdb \
-			-in {input} \
-			-out {params.prefix} \
-			-dbtype nucl
-
-		mv GVD.* {params.out_dir}
-		"""
-
-rule query_GVD:
-	"""
-	Run tBLASTx search of filtered contig dictionary against GVD to get annotations.
+	Run mmseqs2 easy-search of contig dictionary against GVD
 	"""
 	input:
-		dbFile = os.path.join("results", "GVD_nucleotide_db", "GVD.ndb"),
-		query = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
-	params:
-		blast_dir = os.path.join("results", "GVD_nucleotide_db"),
-		prefix = "GVD"
+		queryFile = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta"),
+		targetFile = {GVD}
 	output:
-		os.path.join("results", "GVD_tBLASTx_results", "GVD_contig_dictionary_tBLASTx_results.tab")
-	threads: 8
+		tmpDir = directory(temp(os.path.join("results", "mmseqs_GVD_results_tmp"))),
+		alignmentFile = os.path.join("results", "mmseqs_GVD_results", "mmseqs_GVD_results.m8")
+	threads: 16
+	resources:
+		mem_mb = 64000
 	shell:
 		"""
-		{BLAST}/tblastx \
-			-db {params.blast_dir}/{params.prefix} \
-			-query {input.query} \
-			-out {output} \
-			-outfmt "6 qseqid sseqid pident length evalue bitscore" \
-			-evalue 0.001 \
-			-num_threads {threads}
+		module load {MMSEQS}
+		mmseqs easy-search \
+			{input.queryFile} \
+			{input.targetFile} \
+			{output.alignmentFile} \
+			{output.tmpDir} \
+			--search-type 2 \
+			--threads {threads}
 		"""
