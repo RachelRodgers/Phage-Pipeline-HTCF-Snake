@@ -24,7 +24,7 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 rule all:
 	input:
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
-		os.path.join("results", "phage_contigs_for_NT", "phage_contigs_for_NT.txt")
+		os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.m8")
 		
 #----- Snakemake Workflow -----#
 
@@ -45,3 +45,9 @@ include: "./rules/query_MGV.smk"
 
 #----- Select Probable Phage Contigs from the MMSeqs Results -----#
 include: "./rules/select_phage_contigs_for_NT.smk"
+
+#----- Extract the Probable Phage Contig Sequences to a New File to Query against NT with MMSeqs2 -----#
+include: "./rules/extract_contigs_for_NT.smk"
+
+#----- Untranslated (blastn) MMSeqs2 Search of Probable Phage Contigs against NT -----#
+include: "./rules/query_NT.smk"
