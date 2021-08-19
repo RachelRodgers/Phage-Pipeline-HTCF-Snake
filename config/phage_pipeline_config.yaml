@@ -6,6 +6,7 @@ DBs:
   GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Gut_Virome_Database/GVDv1_viralpopulations.fna
   GPD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Gut_Phage_Database/GPD_sequences.fa
   MGV: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Metagenomic_Gut_Virus_Catalog/mgv_contigs.fna
+  NT: /scratch/mtblab/rachel/mmseqs_NT_db/mmseqs_NT
 
 Tools:
   BBTools: bbtools/38.26
