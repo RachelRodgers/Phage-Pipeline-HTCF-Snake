@@ -1,6 +1,6 @@
 ---
 Paths:
-  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/Hecatomb-HTCF-Snake
+  Hecatomb: /scratch/mtblab/rachel/Holtz_eLABE/Hecatomb_Run_210511/Hecatomb-HTCF-Snake
 
 DBs:
   GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Gut_Virome_Database/GVDv1_viralpopulations.fna
