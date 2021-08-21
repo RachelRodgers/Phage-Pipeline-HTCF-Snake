@@ -24,7 +24,8 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 rule all:
 	input:
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
-		os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.m8")
+		os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_results_bestHit.m8")
+		#os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.m8")
 		
 #----- Snakemake Workflow -----#
 
@@ -35,13 +36,16 @@ include: "./rules/build_contig_dictionary.smk"
 include: "./rules/quantify_contig_dictionary.smk"
 
 #----- Translated Search of Contig Dictionary against the Human Gut Virome DB (GVD) using MMSeqs2 (equivalent to tblastx) -----#
-include: "./rules/query_GVD.smk"
+#include: "./rules/query_GVD.smk"
 
 #----- Translated Search Contig Dictionary against the Gut Phage DB (GPD) using MMSeqs2 (equivalent to tblastx) -----#
-include: "./rules/query_GPD.smk"
+#include: "./rules/query_GPD.smk"
 
 #----- Translated Search Contig Dictionary against the Metagenomic Gut Virus Catalog (MGV) using MMSeqs2 (equivalent to tblastx)-----#
-include: "./rules/query_MGV.smk"
+#include: "./rules/query_MGV.smk"
+
+#----- Query Contig Dictionary against Phage Databases using MMSeqs -----#
+include: "./rules/query_phage_databases.smk"
 
 #----- Select Probable Phage Contigs from the MMSeqs Results -----#
 include: "./rules/select_phage_contigs_for_NT.smk"
