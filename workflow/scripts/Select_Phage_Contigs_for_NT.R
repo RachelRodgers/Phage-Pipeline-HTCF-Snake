@@ -21,16 +21,16 @@ for (package in requiredPackages) {
   }
 }
 
-filePaths <- "./results/"
+filePaths <- "./results/mmseqs_phageDB_results/"
 
 # Currently we have searched against three phage DBs, but ultimately this may
 #   be limited to one and negate all the following looping functions.
 
-dataSets <- c("GPD" = "mmseqs_GPD_results", 
-              "GVD" = "mmseqs_GVD_results", 
-              "MGV" = "mmseqs_MGV_results")
+dataSets <- c("GPD" = "GPD_search_results/GPD_results_bestHit.m8", 
+              "GVD" = "GVD_search_results/GVD_results_bestHit.m8", 
+              "MGV" = "MGV_search_results/MGV_results_bestHit.m8")
 
-resFiles <- paste0(filePaths, dataSets, "/", paste0(dataSets, ".m8"))
+resFiles <- paste0(filePaths, dataSets)
 names(resFiles) <- names(dataSets)
 
 m8Columns <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen",
@@ -49,7 +49,7 @@ uniqueContigs <- unique(unlist(resDataUnique))
 dir.create(path = "./results/probable_phage_contigs/", showWarnings = FALSE)
 
 write.table(x = uniqueContigs, 
-            file = "./results/phage_contigs_for_NT/phage_contigs_for_NT.txt",
+            file = "./results/original_phage_contigs_for_NT.txt",
             quote = FALSE, sep = "\t", row.names = FALSE)
 
 #----- Save session information -----#
