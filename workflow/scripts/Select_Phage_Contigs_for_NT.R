@@ -46,10 +46,10 @@ resDataUnique <- map(resData, ~ unique(.x))
 uniqueContigs <- unique(unlist(resDataUnique))
 
 # write out these unique contigs to file
-dir.create(path = "./results/probable_phage_contigs/", showWarnings = FALSE)
+dir.create(path = "./results/phage_contigs_for_NT/", showWarnings = FALSE)
 
 write.table(x = uniqueContigs, 
-            file = "./results/original_phage_contigs_for_NT.txt",
+            file = "./results/phage_contigs_for_NT/phage_contigs_for_NT.txt",
             quote = FALSE, sep = "\t", row.names = FALSE)
 
 #----- Save session information -----#
