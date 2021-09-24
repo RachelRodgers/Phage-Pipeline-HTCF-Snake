@@ -10,7 +10,6 @@ HECATOMB_DIR = config["Paths"]["Hecatomb"]
 
 # Tools
 BBTOOLS = config["Tools"]["BBTools"]
-METASPADES = config["Tools"]["metaSPAdes"]
 MEGAHIT = config["Tools"]["megahit"]
 SEQKIT = config["Tools"]["SeqKit"]
 FLYE = config["Tools"]["Flye"]
@@ -140,9 +139,9 @@ rule assemble_contig_dictionary:
 	input:
 		os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
 	params:
-		directory(os.path.join("results", "contig_dictionary"))
+		directory(os.path.join("results", "contig_dictionary_unfiltered"))
 	output:
-		os.path.join("results", "contig_dictionary", "assembly.fasta")
+		os.path.join("results", "contig_dictionary_unfiltered", "assembly.fasta")
 	threads: 8
 	shell:
 		"""
@@ -161,9 +160,9 @@ rule filter_contig_dictionary:
 	I only gave it files of 1kb contigs but that's what seems to be happening anyway...
 	"""
 	input:
-		os.path.join("results", "contig_dictionary", "assembly.fasta")
+		os.path.join("results", "contig_dictionary_unfiltered", "assembly.fasta")
 	output:
-		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	shell:
                 """
                 ml {SEQKIT}

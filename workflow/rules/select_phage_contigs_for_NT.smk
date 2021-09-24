@@ -4,9 +4,9 @@
 
 rule select_phage_contigs_for_NT:
 	input:
-		GVD = os.path.join("results", "mmseqs_GVD_results", "mmseqs_GVD_results.m8"),
-		GPD = os.path.join("results", "mmseqs_GPD_results", "mmseqs_GPD_results.m8"),
-		MGV = os.path.join("results", "mmseqs_MGV_results", "mmseqs_MGV_results.m8")
+		GPD = os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_results_bestHit.m8"),
+		GVD = os.path.join("results", "mmseqs_phageDB_results", "GVD_search_results", "GVD_results_bestHit.m8"),
+		MGV = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_results_bestHit.m8")
 	output:
 		os.path.join("results", "phage_contigs_for_NT", "phage_contigs_for_NT.txt")
 	shell:

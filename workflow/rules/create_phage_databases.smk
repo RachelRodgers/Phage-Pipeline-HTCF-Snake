@@ -18,7 +18,7 @@ rule convert_contig_dict_to_queryDB:
 	Convert the contig dictionary sequences into a queryDB for mmseqs search
 	"""
 	input:
-		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	params:
 		prefix = "contig_dictionary_queryDB",
 		directory = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB")

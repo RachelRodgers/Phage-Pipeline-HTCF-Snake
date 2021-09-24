@@ -2,3 +2,6 @@ ref
 workflow/results
 .Rproj.user
 results
+.snakemake/
+logs_slurm/
+slurm-*.out

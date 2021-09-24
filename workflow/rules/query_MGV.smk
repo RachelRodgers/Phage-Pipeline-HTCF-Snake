@@ -14,10 +14,10 @@ rule mmseqs_search_MGV:
 	"""
 	input:
 		queryIdx = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB.index"),
-		targetIdx = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB.index"),
-		queryDB = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB"),
-		targetDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB")
+		targetIdx = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB.index")
 	params:
+		queryDB = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB"),
+		targetDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB"),
 		resultDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_resultDB"),
 		outputDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results"),
 		tmp = directory(os.path.join("results", "mmseqs_phageDB_results", "tmp_MGV_search"))
@@ -25,13 +25,13 @@ rule mmseqs_search_MGV:
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_search_resultDB.index")
 	threads: 16
 	resources:
-		mem_mb = 64000
+		mem_mb = 128000
 	shell:
 		"""
 		ml {MMSEQS}
 		mmseqs search \
-			{input.queryDB} \
-			{input.targetDB} \
+			{params.queryDB} \
+			{params.targetDB} \
 			{params.resultDB} \
 			{params.tmp} \
 			-a \
@@ -73,10 +73,10 @@ rule convert_best_MGV_results_to_m8:
 	Conver the output of MGV_search_bestResultDB to m8 file
 	"""
 	input:
-		bestResultIdx = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_search_bestResultDB.index"),
-		queryDB = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB"),
-		targetDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB")
+		bestResultIdx = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_search_bestResultDB.index")
 	params:
+		queryDB = os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB"),
+		targetDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB"),
 		bestResultDB = os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_search_bestResultDB")
 	output:
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_results_bestHit.m8")
@@ -87,8 +87,8 @@ rule convert_best_MGV_results_to_m8:
 		"""
 		ml {MMSEQS}
 		mmseqs convertalis \
-			{input.queryDB} \
-			{input.targetDB} \
+			{params.queryDB} \
+			{params.targetDB} \
 			{params.bestResultDB} \
 			{output} \
 			--threads {threads}
