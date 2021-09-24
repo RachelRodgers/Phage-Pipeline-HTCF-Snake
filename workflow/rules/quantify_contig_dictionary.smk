@@ -17,7 +17,7 @@ rule build_reference_from_contig_dictionary:
 	Build reference from contig dictionary for BBMap for the quantification by mapping (RPKM step)
 	"""
 	input:
-		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	output:
 		os.path.join("results", "ref", "genome", "1", "summary.txt")
 	shell:

@@ -5,7 +5,7 @@
 rule extract_contigs_for_NT:
 	input:
 		identifiers = os.path.join("results", "phage_contigs_for_NT", "phage_contigs_for_NT.txt"),
-		sequences = os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
+		sequences = os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	output:
 		os.path.join("results", "phage_contigs_for_NT", "phage_contigs_for_NT.fasta")
 	run:

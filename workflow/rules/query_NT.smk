@@ -32,31 +32,30 @@ rule convert_contigs_to_sequenceDB:
 		mv {params.prefix}* {params.directory}
 		"""
 
-rule query_NT:
+rule search_NT:
 	"""
 	Search the phage contigs against NT with mmseqs2 (nucleotide search).
-	(TODO) Once all the NT_resultsDB* files are written out, may want to move into subdirectory of
-	mmseqs_NT_results to keep things more organized.
 	"""
 	input:
-		idx = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB.index"),
-		queryDB = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB"),
+		queryIdx = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB.index"),
 		targetDB = {NT}
 	params:
-		alnDB = os.path.join("results", "mmseqs_NT_results", "NT_resultsDB"),
+		queryDB = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB"),
+		resultDB = os.path.join("results", "mmseqs_NT_results", "NT_resultsDB"),
+		outputDB = os.path.join("results", "mmseqs_NT_results", "NT_search_results"),
 		tmp = directory(os.path.join("results", "mmseqs_NT_results", "tmp_NT_search"))
 	output:
-		idx = os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.index")
+		os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_resultsDB.index")
 	threads: 16
 	resources:
-		mem_mb = 200000
+		mem_mb = 245000
 	shell:
 		"""
 		ml {MMSEQS}
 		mmseqs search \
-			{input.queryDB} \
+			{params.queryDB} \
 			{input.targetDB} \
-			{params} \
+			{params.resultDB} \
 			{params.tmp} \
 			-a \
 			-e 1.000E-10 \
@@ -64,28 +63,59 @@ rule query_NT:
 			--sens-steps 3 \
 			-s 7 \
 			--search-type 3 \
+			--threads {threads} \
+			--force-reuse 1
+		mkdir -p {params.outputDB}
+		mv {params.resultDB}* {params.outputDB}
+		"""
+
+rule extract_best_NT_hit:
+	"""
+	Extract the best hit from the NT search
+	"""
+	input:
+		resultIdx = os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_resultsDB.index")
+	params:
+		resultDB = os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_resultsDB"),
+		bestResultDB = os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_search_bestResultDB")
+	output:
+		os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_search_bestResultDB.index")
+	threads: 16
+	resources:
+		mem_mb = 64000
+	shell:
+		"""
+		ml {MMSEQS}
+		mmseqs filterdb \
+			{params.resultDB} \
+			{params.bestResultDB} \
+			--extract-lines 1 \
 			--threads {threads}
 		"""
 
-rule convert_NT_results:
+rule convert_best_NT_results_to_m8:
 	"""
-	Convert the result database created in rule query_NT into a BLAST tab formatted file
+	Convert the output of NT_search_bestResultDB to m8 file
 	"""
 	input:
-		idx = os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.index"),
+		bestResultIdx = os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_search_bestResultDB.index"),
+		targetDB = {NT}
+	params:
 		queryDB = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB"),
-		targetDB = {NT},
-		resultDB = os.path.join("results", "mmseqs_NT_results", "NT_resultsDB")
+		bestResultDB = os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_search_bestResultDB")
 	output:
-		os.path.join("results", "mmseqs_NT_results", "NT_resultsDB.m8")
-	threads: 16
+		os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_results_bestHit.m8")
+	threads:
+		16
+	resources:
+		mem_mb = 64000
 	shell:
 		"""
 		ml {MMSEQS}
 		mmseqs convertalis \
-			{input.queryDB} \
+			{params.queryDB} \
 			{input.targetDB} \
-			{input.resultDB} \
+			{params.bestResultDB} \
 			{output} \
-			--threads {threads}
+			--threads {threads} 
 		"""
