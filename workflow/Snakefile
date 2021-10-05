@@ -27,7 +27,7 @@ rule all:
 		os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_results_bestHit.m8"),
 		os.path.join("results", "mmseqs_phageDB_results", "GVD_search_results", "GVD_results_bestHit.m8"),
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_results_bestHit.m8"),
-		os.path.join("reuslts", "mmseqs_NT_results", "NT_search_results", "NT_results_bestHit.m8")
+		os.path.join("results", "mmseqs_NT_results", "NT_search_results", "NT_results_bestHit.m8")
 		
 #----- Snakemake Workflow -----#
 
