@@ -35,6 +35,7 @@ rule convert_contigs_to_sequenceDB:
 rule search_NT:
 	"""
 	Search the phage contigs against NT with mmseqs2 (nucleotide search).
+	TODO: Option for force-reuse upon failure
 	"""
 	input:
 		queryIdx = os.path.join("results", "mmseqs_NT_results", "contig_queryDB", "contig_queryDB.index"),
@@ -63,8 +64,7 @@ rule search_NT:
 			--sens-steps 3 \
 			-s 7 \
 			--search-type 3 \
-			--threads {threads} \
-			--force-reuse 1
+			--threads {threads}
 		mkdir -p {params.outputDB}
 		mv {params.resultDB}* {params.outputDB}
 		"""
