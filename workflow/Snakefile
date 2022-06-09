@@ -23,7 +23,7 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 
 rule all:
 	input:
-		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
+		#os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
 		os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_results_bestHit.m8"),
 		os.path.join("results", "mmseqs_phageDB_results", "GVD_search_results", "GVD_results_bestHit.m8"),
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_results_bestHit.m8"),
