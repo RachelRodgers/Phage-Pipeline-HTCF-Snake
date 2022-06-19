@@ -121,53 +121,12 @@ rule filter_contigs:
 		"""
 
 rule concatenate_renamed_contigs:
-        """
-        Concatenate all individual (renamed) contig assemblies into one file.
-        """
+	"""
+	Concatenate all individual (renamed) contig assemblies into one file.
+	"""
         input:
-                expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
-        output:
-				os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
-                #os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
+		expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
+	output:
+		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	shell:
 		"cat {input} > {output}"
-
-# rule assemble_contig_dictionary:
-# 	"""
-# 	Generate contig dictionary with Flye
-# 	"""
-# 	input:
-# 		os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
-# 	params:
-# 		directory(os.path.join("results", "contig_dictionary_unfiltered"))
-# 	output:
-# 		os.path.join("results", "contig_dictionary_unfiltered", "assembly.fasta")
-# 	threads: 8
-# 	shell:
-# 		"""
-# 		ml {FLYE}
-# 		flye \
-# 			--subassemblies {input} \
-# 			-o {params} \
-# 			-t {threads} \
-# 			--meta
-# 		"""
-
-# rule filter_contig_dictionary:
-# 	"""
-# 	Filter the contigs in the contig dictionary to a minimum of 1kb with Seqkit.
-# 	I'm not sure how it's possible for flye to generate contigs < 1kb considering
-# 	I only gave it files of 1kb contigs but that's what seems to be happening anyway...
-# 	"""
-# 	input:
-# 		os.path.join("results", "contig_dictionary_unfiltered", "assembly.fasta")
-# 	output:
-# 		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
-# 	shell:
-#                 """
-#                 ml {SEQKIT}
-#                 seqkit \
-#                         seq {input} \
-#                         -m 1000 \
-#                         -o {output}
-#                 """
