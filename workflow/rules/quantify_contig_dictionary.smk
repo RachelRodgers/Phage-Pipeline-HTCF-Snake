@@ -63,16 +63,16 @@ rule quantification_by_mapping:
 		"""
 
 # rule generate_contig_abundances:
-# 	"""
-# 	Calculate contig abundances using TPM
-# 	"""
-# 	input:
-# 		rpkm = expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES),
-# 		covstats = expand(os.path.join("results", "quantification", "{sample}.covstats"), sample = SAMPLES)
-# 	output:
-# 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
-# 	shell:
-# 		"""
-# 		ml {R}
-# 		Rscript ./workflow/scripts/Generate_Contig_Abundance_Table.R
-# 		"""
+	"""
+	Calculate contig abundances using TPM
+	"""
+	input:
+		rpkm = expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES),
+		covstats = expand(os.path.join("results", "quantification", "{sample}.covstats"), sample = SAMPLES)
+	output:
+	os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
+	shell:
+		"""
+		ml {R}
+		Rscript ./workflow/scripts/Generate_Contig_Abundance_Table.R
+		"""
