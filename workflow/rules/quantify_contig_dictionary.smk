@@ -62,7 +62,7 @@ rule quantification_by_mapping:
 			t={threads}
 		"""
 
-# rule generate_contig_abundances:
+rule generate_contig_abundances:
 	"""
 	Calculate contig abundances using TPM
 	"""
@@ -70,7 +70,7 @@ rule quantification_by_mapping:
 		rpkm = expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES),
 		covstats = expand(os.path.join("results", "quantification", "{sample}.covstats"), sample = SAMPLES)
 	output:
-	os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
+		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
 	shell:
 		"""
 		ml {R}
