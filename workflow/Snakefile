@@ -2,6 +2,8 @@
 Snakefile for running phage assembly from Hecatomb QC'd reads.
 
 Rachel Rodgers, June 2021
+
+Updating all branches for new HTCF cluster October 2022.
 """
 
 import os
@@ -33,12 +35,16 @@ ct2Env.write(CT2_ENV)
 ct2Env.close()
 
 # Tools
-
+CT2 = config["Tools"]["CT2"]
 BBTOOLS = config["Tools"]["BBTools"]
 MEGAHIT = config["Tools"]["megahit"]
 SEQKIT = config["Tools"]["SeqKit"]
 FLYE = config["Tools"]["flye"]
 R = config["Tools"]["R"]
+
+# Paths
+CT2_PATH = config["Paths"]["CT2"]
+CT2_TEMPLATE = config["Paths"]["CT2_template"]
 
 #----- Collect the Input Files -----#
 
@@ -81,8 +87,7 @@ rule bbnorm:
 	threads: 4
 	shell:
 		"""
-		ml {BBTOOLS}
-		bbnorm.sh \
+		bash {BBTOOLS}bbnorm.sh \
 			in={input.r1} \
 			in2={input.r2} \
 			extra={input.r1Singletons},{input.r2Singletons} \
@@ -109,7 +114,7 @@ rule megahit:
 		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
 	shell:
 		"""
-		ml {MEGAHIT}
+		eval "$(conda shell.bash hook)"
 		megahit \
 			-1 {input.r1} \
 			-2 {input.r2} \
@@ -131,8 +136,7 @@ rule rename_contigs:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
 		"""
-		ml {BBTOOLS}
-		rename.sh \
+		bash {BBTOOLS}rename.sh \
 			in={input} \
 			out={output} \
 			prefix={wildcards.sample} \
@@ -149,7 +153,7 @@ rule filter_contigs:
 		os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta")
 	shell:
 		"""
-		ml {SEQKIT}
+		{SEQKIT}
 		seqkit \
 			seq {input} \
 			-m 1000 \
@@ -181,8 +185,9 @@ rule assemble_contig_dictionary:
 	threads: 8
 	shell:
 		"""
-		ml {FLYE}
-		flye \
+		eval "$(conda shell.bash hook)"
+		{FLYE} 
+			flye \
 			--subassemblies {input} \
 			-o {params} \
 			-t {threads} \
@@ -200,13 +205,13 @@ rule filter_contig_dictionary:
 	output:
 		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
 	shell:
-                """
-                ml {SEQKIT}
-                seqkit \
-                        seq {input} \
-                        -m 1000 \
-                        -o {output}
-                """
+		"""
+		{SEQKIT}
+		seqkit \
+			seq {input} \
+			-m 1000 \
+			-o {output}
+			"""
 
 rule build_reference:
 	"""
@@ -220,8 +225,7 @@ rule build_reference:
 		os.path.join("ref", "genome", "1", "summary.txt")
 	shell:
 		"""
-		ml {BBTOOLS}
-		bbmap.sh ref={input}
+		bash {BBTOOLS}bbmap.sh ref={input}
 		"""
 	
 rule quantification_by_mapping:
@@ -239,8 +243,7 @@ rule quantification_by_mapping:
 	threads: 8
 	shell:
 		"""
-		ml {BBTOOLS}	
-		bbmap.sh \
+		bash {BBTOOLS}bbmap.sh \
 			in={input.r1} \
 			in2={input.r2} \
 			out={output.sam} \
@@ -269,7 +272,19 @@ rule annotate_contig_dictionary:
 		threads=16
 	shell:
 		"""
-		bash ./workflow/scripts/Run_CT2_Virus_Enriched.sh
+		eval "$(conda shell.bash hook)"
+		conda activate 
+		
+			python {CT2_PATH}/run_cenote-taker2.py \
+				--contigs ./results/contig_dictionary/assembly_1kb.fasta \
+				--run_title ct2_annotated_contig_dictionary \
+				--template_file ${templatePath} \
+				--prune_prophage False \
+				--mem 32 \
+				--cpu 16 \
+				--virus_domain_db standard \
+				--circ_minimum_hallmark_genes 0 \
+				--lin_minimum_hallmark_genes 1
 		"""
 
 rule move_contig_annotations:
@@ -301,6 +316,6 @@ rule generate_contig_abundances:
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt")
 	shell:
 		"""
-		ml {R}
+		{R}
 		Rscript ./workflow/scripts/Generate_Contig_Abundance_Table.R
 		"""
