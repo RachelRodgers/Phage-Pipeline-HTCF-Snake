@@ -26,8 +26,7 @@ rule convert_contigs_to_sequenceDB:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs createdb {input} {params.prefix}
+		{MMSEQS} createdb {input} {params.prefix}
 		mkdir -p {params.directory}
 		mv {params.prefix}* {params.directory}
 		"""
@@ -52,8 +51,7 @@ rule search_NT:
 		mem_mb = 245000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs search \
+		{MMSEQS} search \
 			{params.queryDB} \
 			{input.targetDB} \
 			{params.resultDB} \
@@ -85,8 +83,7 @@ rule extract_best_NT_hit:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs filterdb \
+		{MMSEQS} filterdb \
 			{params.resultDB} \
 			{params.bestResultDB} \
 			--extract-lines 1 \
@@ -111,8 +108,7 @@ rule convert_best_NT_results_to_m8:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs convertalis \
+		{MMSEQS} convertalis \
 			{params.queryDB} \
 			{input.targetDB} \
 			{params.bestResultDB} \

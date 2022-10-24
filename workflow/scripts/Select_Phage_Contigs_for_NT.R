@@ -9,7 +9,7 @@ options(warn = -1) # Suppress warning messages for clarity
 
 source("./workflow/scripts/snakemake_helpers/snakemake_helpers.R")
 
-requiredPackages <- c("tidyverse")
+requiredPackages <- c("purrr")
 
 for (package in requiredPackages) {
   TryInstall(package)

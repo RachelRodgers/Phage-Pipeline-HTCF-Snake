@@ -11,6 +11,6 @@ rule select_phage_contigs_for_NT:
 		os.path.join("results", "phage_contigs_for_NT", "phage_contigs_for_NT.txt")
 	shell:
 		"""
-		module load {R}
+		{R}
 		Rscript ./workflow/scripts/Select_Phage_Contigs_for_NT.R
 		"""

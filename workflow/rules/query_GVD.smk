@@ -28,8 +28,7 @@ rule mmseqs_search_GVD:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs search \
+		{MMSEQS} search \
 			{params.queryDB} \
 			{params.targetDB} \
 			{params.resultDB} \
@@ -60,8 +59,7 @@ rule extract_best_GVD_hit:
 		os.path.join("results", "mmseqs_phageDB_results", "GVD_search_results", "GVD_search_bestResultDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs filterdb \
+		{MMSEQS} filterdb \
 			{params.resultDB} \
 			{params.bestResultDB} \
 			--extract-lines 1 \
@@ -85,8 +83,7 @@ rule convert_best_GVD_results_to_m8:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs convertalis \
+		{MMSEQS} convertalis \
 			{params.queryDB} \
 			{params.targetDB} \
 			{params.bestResultDB} \

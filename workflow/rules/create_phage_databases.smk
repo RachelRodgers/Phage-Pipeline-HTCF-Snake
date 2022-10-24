@@ -26,8 +26,7 @@ rule convert_contig_dict_to_queryDB:
 		os.path.join("results", "mmseqs_phageDB_results", "contig_dictionary_queryDB", "contig_dictionary_queryDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs createdb {input} {params.prefix}
+		{MMSEQS} createdb {input} {params.prefix}
 		mkdir -p {params.directory}
 		mv {params.prefix}* {params.directory}
 		"""
@@ -45,8 +44,7 @@ rule convert_GPD_to_queryDB:
 		os.path.join("results", "mmseqs_phageDB_results", "GPD_targetDB", "GPD_targetDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs createdb {input} {params.prefix}
+		{MMSEQS} createdb {input} {params.prefix}
 		mkdir -p {params.directory}
 		mv {params.prefix}* {params.directory}
 		"""
@@ -64,8 +62,7 @@ rule convert_GVD_to_queryDB:
 		os.path.join("results", "mmseqs_phageDB_results", "GVD_targetDB", "GVD_targetDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs createdb {input} {params.prefix}
+		{MMSEQS} createdb {input} {params.prefix}
 		mkdir -p {params.directory}
 		mv {params.prefix}* {params.directory}
 		"""
@@ -83,8 +80,7 @@ rule convert_MGV_to_queryDB:
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_targetDB", "MGV_targetDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs createdb {input} {params.prefix}
+		{MMSEQS} createdb {input} {params.prefix}
 		mkdir -p {params.directory}
 		mv {params.prefix}* {params.directory}
 		"""

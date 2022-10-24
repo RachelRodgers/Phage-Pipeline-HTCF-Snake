@@ -23,8 +23,7 @@ rule build_reference_from_contig_dictionary:
 		os.path.join("results", "ref", "genome", "1", "summary.txt")
 	shell:
 		"""
-		ml {BBTOOLS}
-		bbmap.sh \
+		bash {BBTOOLS}bbmap.sh \
 			ref={input} \
 			build=1 \
 			path=./results
@@ -45,8 +44,7 @@ rule quantification_by_mapping:
 	threads: 8
 	shell:
 		"""
-		ml {BBTOOLS}	
-		bbmap.sh \
+		bash {BBTOOLS}bbmap.sh \
 			path=./results \
 			build=1 \
 			in={input.r1} \

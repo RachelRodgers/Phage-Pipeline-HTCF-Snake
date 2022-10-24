@@ -29,8 +29,7 @@ rule mmseqs_search_GPD:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs search \
+		{MMSEQS} search \
 			{params.queryDB} \
 			{params.targetDB} \
 			{params.resultDB} \
@@ -61,8 +60,7 @@ rule extract_best_GPD_hit:
 		os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_search_bestResultDB.index")
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs filterdb \
+		{MMSEQS} filterdb \
 			{params.resultDB} \
 			{params.bestResultDB} \
 			--extract-lines 1 \
@@ -86,8 +84,7 @@ rule convert_best_GPD_results_to_m8:
 		mem_mb = 64000
 	shell:
 		"""
-		ml {MMSEQS}
-		mmseqs convertalis \
+		{MMSEQS} convertalis \
 			{params.queryDB} \
 			{params.targetDB} \
 			{params.bestResultDB} \

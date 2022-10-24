@@ -9,11 +9,11 @@ DBs:
   NT: /scratch/mtblab/rachel/mmseqs_NT_db/mmseqs_NT
 
 Tools:
-  BBTools: bbtools/38.26
-  SeqKit: seqkit/0.10.1
-  Flye: py-flye/2.8.1-python-3.6.5
-  R: r/3.6.3-python-3.6.5-java-11
+  BBTools: /ref/mtblab/software/bbmap_38.96/bbmap/
+  SeqKit: eval $( spack load --sh seqkit@0.10.1 )
+  Flye: conda activate flye_2.9.1
+  R: eval $( spack load --sh r@4.1.1 )
   metaSPAdes: spades/3.14.0-python-2.7.15
   BLAST: /opt/apps/labs/mtblab/software/ncbi-blast-2.11.0+/bin
-  megahit: megahit/1.1.4
-  MMSeqs2: mmseqs2/13-45111
+  megahit: conda activate megahit_1.2.9
+  MMSeqs2: /ref/mtblab/software/mmseqs/bin/mmseqs
