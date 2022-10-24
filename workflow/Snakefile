@@ -30,7 +30,7 @@ ct2Template.write(CT2_TEMPLATE)
 ct2Template.close()
 
 ct2Env = open(os.path.join(SCRIPTS, "ct2Env.txt"), "w")
-CT2_ENV = config["Paths"]["CT2_path"]
+CT2_ENV = config["Paths"]["CT2"]
 ct2Env.write(CT2_ENV)
 ct2Env.close()
 
@@ -56,7 +56,7 @@ SAMPLES, = glob_wildcards(os.path.join(HECATOMB_DIR, "results", "QC", "step_7", 
 rule all:
 	input:
 		os.path.join("results", "contig_abundance_table", "contig_abundance_table.txt"),
-		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv"),
+		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2AnnoDict_CONTIG_SUMMARY.tsv"),
 		expand(os.path.join("results", "quantification", "{sample}.rpkm"), sample = SAMPLES)
 
 rule get_r2_singletons:
@@ -115,6 +115,7 @@ rule megahit:
 	shell:
 		"""
 		eval "$(conda shell.bash hook)"
+		{MEGAHIT}
 		megahit \
 			-1 {input.r1} \
 			-2 {input.r2} \
@@ -186,12 +187,13 @@ rule assemble_contig_dictionary:
 	shell:
 		"""
 		eval "$(conda shell.bash hook)"
-		{FLYE} 
-			flye \
+		{FLYE}
+		flye \
 			--subassemblies {input} \
 			-o {params} \
 			-t {threads} \
-			--meta
+			--meta \
+			--debug
 		"""
 
 rule filter_contig_dictionary:
@@ -227,7 +229,7 @@ rule build_reference:
 		"""
 		bash {BBTOOLS}bbmap.sh ref={input}
 		"""
-	
+
 rule quantification_by_mapping:
 	"""
 	Map QC'd reads to contig dictionary with BBMap
@@ -264,27 +266,27 @@ rule annotate_contig_dictionary:
 	input:
 		os.path.join("results", "contig_dictionary", "assembly_1kb.fasta")
 	params:
-		directory(os.path.join("ct2_annotated_contig_dictionary"))
+		directory(os.path.join("ct2AnnoDict"))
 	output:
-		os.path.join("ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
+		os.path.join("ct2AnnoDict", "ct2AnnoDict_CONTIG_SUMMARY.tsv")
 	resources:
 		mem_mb=32000,
 		threads=16
 	shell:
 		"""
 		eval "$(conda shell.bash hook)"
-		conda activate 
-		
-			python {CT2_PATH}/run_cenote-taker2.py \
-				--contigs ./results/contig_dictionary/assembly_1kb.fasta \
-				--run_title ct2_annotated_contig_dictionary \
-				--template_file ${templatePath} \
-				--prune_prophage False \
-				--mem 32 \
-				--cpu 16 \
-				--virus_domain_db standard \
-				--circ_minimum_hallmark_genes 0 \
-				--lin_minimum_hallmark_genes 1
+		{CT2}
+
+		python {CT2_PATH}/run_cenote-taker2.py \
+			--contigs ./results/contig_dictionary/assembly_1kb.fasta \
+			--run_title ct2AnnoDict \
+			--template_file {CT2_TEMPLATE} \
+			--prune_prophage False \
+			--mem 32 \
+			--cpu 16 \
+			--virus_domain_db standard \
+			--circ_minimum_hallmark_genes 0 \
+			--lin_minimum_hallmark_genes 1
 		"""
 
 rule move_contig_annotations:
@@ -292,17 +294,17 @@ rule move_contig_annotations:
 	Move CT2 contig annotations into the results directory.
 	"""
 	input:
-		os.path.join("ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
+		os.path.join("ct2AnnoDict", "ct2AnnoDict_CONTIG_SUMMARY.tsv")
 	params:
-		inDir = directory(os.path.join("ct2_annotated_contig_dictionary")),
+		inDir = directory(os.path.join("ct2AnnoDict")),
 		outDir = directory(os.path.join("results", "ct2_annotated_contig_dictionary"))
 	output:
-		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2_annotated_contig_dictionary_CONTIG_SUMMARY.tsv")
+		os.path.join("results", "ct2_annotated_contig_dictionary", "ct2AnnoDict_CONTIG_SUMMARY.tsv")
 	shell:
 		"""
 		mv {params.inDir}/* {params.outDir}
-		rm -rf ct2_annotated_contig_dictionary/
-		rm -rf ct2_annotated_contig_dictionary_*
+		rm -rf ct2AnnoContigDict/
+		rm -rf ct2AnnoContigDict_*
 		"""
 
 rule generate_contig_abundances:

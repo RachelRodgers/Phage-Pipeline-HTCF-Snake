@@ -1,1 +1,0 @@
-/scratch/mtblab/rachel/Phage-Pipeline-HTCF-Snake/phage_CT2_template.sbt

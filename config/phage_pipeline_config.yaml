@@ -1,7 +1,7 @@
 ---
 Paths:
-  Hecatomb: ../somya_mouse_poop_vlps/hecatomb
-  CT2_template: /scratch/mtblab/rachel/Phage-Pipeline-HTCF-Snake/phage_CT2_template.sbt
+  Hecatomb: /scratch/mtblab/rachel/Phage-Pipeline-HTCF-Snake/test_data
+  CT2_template: /scratch/mtblab/rachel/Phage-Pipeline-HTCF-Snake/dummy_template.sbt
   CT2: /ref/mtblab/software/Cenote-Taker2
 
 Tools:
@@ -9,5 +9,5 @@ Tools:
   BBTools: /ref/mtblab/software/bbmap_38.96/bbmap/
   megahit: conda activate megahit_1.2.9
   SeqKit: eval $( spack load --sh seqkit@0.10.1 )
-  flye: conda activate /ref/mtblab/software/flye
-  R: eval $( spack load --sh r@3.6.3 )
+  flye: conda activate flye_2.9.1
+  R: eval $( spack load --sh r@4.1.1 )

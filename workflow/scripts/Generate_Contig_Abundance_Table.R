@@ -8,7 +8,7 @@ options(warn = -1) # Suppress warning messages for clarity
 
 source("./workflow/scripts/snakemake_helpers/snakemake_helpers.R")
 
-requiredPackages <- c("purrr", "magrittr")
+requiredPackages <- c("dplyr", "purrr", "magrittr", "stringr")
 
 for (package in requiredPackages) {
   TryInstall(package)

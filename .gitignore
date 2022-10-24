@@ -1,4 +1,10 @@
 ref
 workflow/results
 .Rproj.user
-results
+results/
+workflow/scripts/ct2Env.txt
+workflow/scripts/ct2Temp.txt
+slurm*.out
+logs_slurm
+.snakemake/
+*.sbt
