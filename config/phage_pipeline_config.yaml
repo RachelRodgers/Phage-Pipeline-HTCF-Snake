@@ -1,12 +1,12 @@
 ---
 Paths:
-  Hecatomb: /scratch/mtblab/rachel/Holtz_eLABE/Hecatomb_Run_210511/Hecatomb-HTCF-Snake
+  Hecatomb: /scratch/mtblab/rachel/Holtz_MOMS/Phage-Pipeline-HTCF-Snake/Hecatomb-HTCF-Snake
 
 DBs:
-  GVD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Gut_Virome_Database/GVDv1_viralpopulations.fna
-  GPD: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Gut_Phage_Database/GPD_sequences.fa
-  MGV: /opt/apps/labs/mtblab/databases/phage-pipeline/resources/Metagenomic_Gut_Virus_Catalog/mgv_contigs.fna
-  NT: /scratch/mtblab/rachel/mmseqs_NT_db/mmseqs_NT
+  GVD: /ref/lhlab/data/phage_pipeline_databases/Gut_Virome_Database/GVDv1_viralpopulations.fna
+  GPD: /ref/lhlab/data/phage_pipeline_databases/Gut_Phage_Database/GPD_sequences.fa
+  MGV: /ref/lhlab/data/phage_pipeline_databases/Metagenomic_Gut_Virus_Catalog/mgv_contigs.fna
+  NT: /ref/lhlab/data/phage_pipeline_databases/mmseqs_NT/mmseqs_NT_db
 
 Tools:
   BBTools: /ref/mtblab/software/bbmap_38.96/bbmap/

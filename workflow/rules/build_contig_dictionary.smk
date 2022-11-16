@@ -120,14 +120,13 @@ rule filter_contigs:
 		"""
 
 rule concatenate_renamed_contigs:
-        """
-        Concatenate all individual (renamed) contig assemblies into one file.
-        """
-        input:
-                expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
-        output:
-				os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
-                #os.path.join("results", "concatenated_contigs", "concatenated_contigs_1kb.fasta")
+	"""
+	Concatenate all individual (renamed) contig assemblies into one file.
+	"""
+	input:
+		expand(os.path.join("results", "filtered_contigs", "{sample}_contigs_1kb.fasta"), sample = SAMPLES)
+	output:
+		os.path.join("results", "contig_dictionary_filtered", "assembly_1kb.fasta")
 	shell:
 		"cat {input} > {output}"
 
