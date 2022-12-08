@@ -26,7 +26,7 @@ rule mmseqs_search_GPD:
 		os.path.join("results", "mmseqs_phageDB_results", "GPD_search_results", "GPD_search_resultDB.index")
 	threads: 16
 	resources:
-		mem_mb = 64000
+		mem_mb = 96000
 	shell:
 		"""
 		{MMSEQS} search \

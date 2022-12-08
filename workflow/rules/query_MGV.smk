@@ -25,7 +25,7 @@ rule mmseqs_search_MGV:
 		os.path.join("results", "mmseqs_phageDB_results", "MGV_search_results", "MGV_search_resultDB.index")
 	threads: 16
 	resources:
-		mem_mb = 128000
+		mem_mb = 148000
 	shell:
 		"""
 		{MMSEQS} search \
