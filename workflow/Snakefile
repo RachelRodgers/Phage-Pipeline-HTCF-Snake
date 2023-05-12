@@ -87,7 +87,8 @@ rule bbnorm:
 	threads: 4
 	shell:
 		"""
-		bash {BBTOOLS}bbnorm.sh \
+		{BBTOOLS}
+		bbnorm.sh \
 			in={input.r1} \
 			in2={input.r2} \
 			extra={input.r1Singletons},{input.r2Singletons} \
@@ -114,7 +115,6 @@ rule megahit:
 		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
 	shell:
 		"""
-		eval "$(conda shell.bash hook)"
 		{MEGAHIT}
 		megahit \
 			-1 {input.r1} \
@@ -137,7 +137,8 @@ rule rename_contigs:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
 		"""
-		bash {BBTOOLS}rename.sh \
+		{BBTOOLS}
+		rename.sh \
 			in={input} \
 			out={output} \
 			prefix={wildcards.sample} \
@@ -186,7 +187,6 @@ rule assemble_contig_dictionary:
 	threads: 8
 	shell:
 		"""
-		eval "$(conda shell.bash hook)"
 		{FLYE}
 		flye \
 			--subassemblies {input} \
@@ -227,7 +227,8 @@ rule build_reference:
 		os.path.join("ref", "genome", "1", "summary.txt")
 	shell:
 		"""
-		bash {BBTOOLS}bbmap.sh ref={input}
+		{BBTOOLS}
+		bbmap.sh ref={input}
 		"""
 
 rule quantification_by_mapping:
@@ -245,7 +246,8 @@ rule quantification_by_mapping:
 	threads: 8
 	shell:
 		"""
-		bash {BBTOOLS}bbmap.sh \
+		{BBTOOLS}
+		bbmap.sh \
 			in={input.r1} \
 			in2={input.r2} \
 			out={output.sam} \
@@ -274,7 +276,6 @@ rule annotate_contig_dictionary:
 		threads=16
 	shell:
 		"""
-		eval "$(conda shell.bash hook)"
 		{CT2}
 
 		python {CT2_PATH}/run_cenote-taker2.py \
