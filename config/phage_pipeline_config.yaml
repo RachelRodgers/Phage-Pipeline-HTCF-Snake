@@ -9,11 +9,11 @@ DBs:
   NT: /ref/lhlab/data/phage_pipeline_databases/mmseqs_NT/mmseqs_NT_db
 
 Tools:
-  BBTools: /ref/mtblab/software/bbmap_38.96/bbmap/
+  BBTools: eval $( spack load --sh bbmap@38.63 )
   SeqKit: eval $( spack load --sh seqkit@0.10.1 )
-  Flye: conda activate flye_2.9.1
+  Flye: eval "$(conda shell.bash hook)"; conda activate flye_2.9.1
   R: eval $( spack load --sh r@4.1.1 )
   metaSPAdes: spades/3.14.0-python-2.7.15
   BLAST: /opt/apps/labs/mtblab/software/ncbi-blast-2.11.0+/bin
-  megahit: conda activate megahit_1.2.9
+  megahit: eval "$(conda shell.bash hook)"; conda activate megahit_1.2.9
   MMSeqs2: /ref/mtblab/software/mmseqs/bin/mmseqs

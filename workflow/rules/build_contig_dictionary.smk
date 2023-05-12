@@ -47,7 +47,8 @@ rule bbnorm:
 	threads: 4
 	shell:
 		"""
-		bash {BBTOOLS}bbnorm.sh \
+		{BBTOOLS}
+		bbnorm.sh \
 			in={input.r1} \
 			in2={input.r2} \
 			extra={input.r1Singletons},{input.r2Singletons} \
@@ -72,7 +73,6 @@ rule megahit:
 		contigs = os.path.join("results", "megahit", "{sample}", "final.contigs.fa")
 	shell:
 		"""
-		eval "$(conda shell.bash hook)"
 		{MEGAHIT}
 		megahit \
 			-1 {input.r1} \
@@ -95,7 +95,8 @@ rule rename_contigs:
 		os.path.join("results", "renamed_contigs", "{sample}_contigs.fasta")
 	shell:
 		"""
-		bash {BBTOOLS}rename.sh \
+		{BBTOOLS}
+		rename.sh \
 			in={input} \
 			out={output} \
 			prefix={wildcards.sample} \
